@@ -2,7 +2,6 @@ import cv2
 import os
 import pytesseract
 
-# Specify Tesseract executable path
 pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
 
 cropping = False
@@ -37,17 +36,17 @@ def process_with_tesseract(image_path, lang='eng+rus+spa+chi_sim'):
     img = cv2.imread(image_path)
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
-    # Detect characters with confidence
+    # confidence
     h_img, w_img, _ = img_gray.shape
     img_letters = img.copy()
     char_boxes = pytesseract.image_to_boxes(img_gray, lang=lang)
     conf_data = pytesseract.image_to_data(img_gray, lang=lang)
     for line in conf_data.splitlines()[1:]:
         parts = line.split()
-        if len(parts) == 12:  # Ensure the line contains all fields
+        if len(parts) == 12:  
             x, y, w, h, conf = int(parts[6]), int(parts[7]), int(parts[8]), int(parts[9]), int(parts[10])
             text = parts[11]
-            if conf > 0:  # Only display positive confidence scores
+            if conf > 0:  
                 cv2.putText(img_letters, f"{conf}%", (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 0, 0), 1)
                 cv2.rectangle(img_letters, (x, y), (x + w, y + h), (255, 0, 0), 2)
 
@@ -62,7 +61,7 @@ def process_with_tesseract(image_path, lang='eng+rus+spa+chi_sim'):
                 cv2.putText(img_words, b[11], (x, y + h + 15), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (50, 50, 255), 2)
                 cv2.rectangle(img_words, (x, y), (x + w, y + h), (50, 50, 255), 2)
 
-    # Close and display
+    # Close n display
     cv2.destroyAllWindows()
     cv2.imshow("Letter Confidence", img_letters)
     cv2.imshow("Word Recognition", img_words)
@@ -70,14 +69,14 @@ def process_with_tesseract(image_path, lang='eng+rus+spa+chi_sim'):
     print("Extracted Text:")
     print(pytesseract.image_to_string(img_gray, lang=lang))
 
-    # Save the annotated images
+    # Saving
     annotated_letters_path = os.path.join(os.path.expanduser("~"), "Desktop", "annotated_letters.jpg")
     annotated_words_path = os.path.join(os.path.expanduser("~"), "Desktop", "annotated_words.jpg")
     cv2.imwrite(annotated_letters_path, img_letters)
     cv2.imwrite(annotated_words_path, img_words)
     print(f"Annotated images saved at {annotated_letters_path} and {annotated_words_path}")
 
-    # Display extracted text line by line
+    # Display text
     print("Extracted text line-by-line:")
     for line in pytesseract.image_to_string(img_gray, lang=lang).splitlines():
         print(line)
