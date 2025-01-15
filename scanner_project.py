@@ -44,7 +44,7 @@ def process_with_tesseract(image_path, lang='eng+rus+spa+chi_sim'):
     for line in conf_data.splitlines()[1:]:
         parts = line.split()
         if len(parts) == 12:  
-            x, y, w, h, conf = int(parts[6]), int(parts[7]), int(parts[8]), int(parts[9]), int(parts[10])
+            x, y, w, h, conf = int(parts[6]), int(parts[7]), int(parts[8]), int(parts[9]), float(parts[10])
             text = parts[11]
             if conf > 0:  
                 cv2.putText(img_letters, f"{conf}%", (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 0, 0), 1)
